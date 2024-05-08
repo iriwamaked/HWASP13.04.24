@@ -1,0 +1,142 @@
+﻿@model HWASP.Models.RegistrationPageModel
+@{
+    ViewData["Title"] = "Регистрация нового пользователя";
+    bool hasValidationErrors = !Model.IsInitialLoad && Model.FormModel != null && Model.ValidationErrors != null && Model.ValidationErrors.Count > 0;
+}
+
+<div class="text-center">
+    <h1 class="display-8"> @Model.PageTitle</h1>
+</div>
+<form method="post" asp-action="Registration" enctype="multipart/form-data" id="signUpForm">
+
+    <div class="row">
+    <div class="col mb-3">
+        
+        <label for="user-name-signup" class="form-label"><i class="bi bi-person-exclamation"> Введите имя*:</i></label>
+         <input type="text" 
+              class="form-control" 
+             id="user-name-signup" 
+             aria-describedby="nameSignUp"
+             aria-label="User-Email"
+             value="@Model.FormModel.UserName"
+             name="user-name-signup">
+    </div>
+    @if(hasValidationErrors && Model.ValidationErrors.ContainsKey(nameof(Model.FormModel.UserName)))
+    {
+        <div class="alert alert-danger col mb-3" role="alert">
+        @Model.ValidationErrors[nameof(Model.FormModel.UserName)]
+    </div>
+    }
+   @*  <div id="nameSignUp" class="form-text col"></div> *@     
+    <div class="row">
+    <div class="col mb-3">
+        <label for="user-email-signup" class="form-label"><i class="bi bi-envelope-exclamation"> Введите электронную почту*:</i></label>
+         <input type="email" 
+              class="form-control" 
+             id="user-email-signup" 
+             aria-describedby="emailSignUp"
+             aria-label="User-Email"
+             value="@Model.FormModel.UserEmail"
+             name="user-email-signup">
+    </div>
+     @if(hasValidationErrors && Model.ValidationErrors.ContainsKey(nameof(Model.FormModel.UserEmail)))
+    {
+        <div class="alert alert-danger col mb-3" role="alert">
+        @Model.ValidationErrors[nameof(Model.FormModel.UserEmail)]
+    </div>
+    }
+   
+  </div>
+
+  <div class="row">
+      <div class="col mb-3">
+        <label for="user-password-signup" class="form-label"><i class="bi bi-lock"> Придумайте пароль*:</i></label>
+        <input type="password" 
+            class="form-control" 
+            id="user-password-signup" 
+            aria-describedby="passwordSignUp"
+            aria-label="User-Password"
+           value="@Model.FormModel.Password"
+            name="user-password-signup">
+     </div>
+     @if(hasValidationErrors && Model.ValidationErrors.ContainsKey(nameof(Model.FormModel.Password)))
+    {
+        <div class="alert alert-danger col mb-3" role="alert">
+        @Model.ValidationErrors[nameof(Model.FormModel.Password)]
+    </div>
+    }
+     
+  </div>
+
+  <div class="row">
+      <div class="col mb-3">
+        <label for="user-password-signup-repeat" class="form-label"><i class="bi bi-lock-fill"> Повторите пароль*:</i></label>
+        <input type="password" 
+            class="form-control" 
+            id="user-password-signup-repeat" 
+            aria-describedby="passwordRepeatSignUp"
+            aria-label="User-Password"
+            name="user-password-signup-repeat">
+     </div>
+      @if(hasValidationErrors && Model.ValidationErrors.ContainsKey(nameof(Model.FormModel.PasswordRepeat)))
+    {
+        <div class="alert alert-danger col mb-3" role="alert">
+        @Model.ValidationErrors[nameof(Model.FormModel.PasswordRepeat)]
+    </div>
+    }
+     
+  </div>
+
+  <div class="row">
+       <div class="col mb-3">
+                 <label for="user-birthday" class="form-label"><i class="bi bi-cake"> Введите дату рождения:</i></label>
+                <input type="date" class="form-control" 
+                    name="user-birthday" 
+                    id="user-birthday"
+                    aria-label="Birthdate" 
+                    aria-describedby="userBirthdate"
+                     value="@Model.FormModel.Birthdate">
+      </div>
+       <div id="userBirthdate" class="form-text col"></div>
+  </div>
+
+  <div class="row">
+       <div class="col mb-3">
+                 <label for="signup-avatar" class="form-label"><i class="bi bi-person-bounding-box"> Загрузите аватар:</i> </label>
+                <input type="file" class="form-control" 
+                    name="signup-avatar" 
+                    id="signup-avatar">
+      </div>
+  </div>
+
+  <div class="row">
+      <div class="col mb-3">
+                <div class="form-check">
+                     <input  name="signup-confirm" class="form-check-input" type="checkbox" value="true" id="signup-confirm">
+                     <label class="form-check-label" for="signup-confirm">
+                        Соглашаюсь с условиями сайта
+                     </label>
+                </div>
+             </div>
+  @if(hasValidationErrors && Model.ValidationErrors.ContainsKey(nameof(Model.FormModel.Confirm)))
+    {
+        <div class="alert alert-danger col mb-3" role="alert">
+        @Model.ValidationErrors[nameof(Model.FormModel.Confirm)]
+    </div>
+    }
+    </div>
+
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+@if(Model.IsSuccess!=null)
+{
+    <div class="@(Model.IsSuccess ?? false ? "alert alert-success":"alert alert-danger")" role="alert">
+  @Model.Message
+</div>
+}
+
+
+ 

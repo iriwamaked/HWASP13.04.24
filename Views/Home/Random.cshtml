@@ -1,0 +1,13 @@
+﻿@model HWASP.Models.RandomServiceTestPageModel
+
+@{
+    ViewData["Title"] = "Testing Random Service";
+}
+
+<div class="text-center">
+    <h1 class="display-4"> @Model.PageTitle<h1>
+</div>
+
+<p>Confirmation Code: @Model.code</p>
+<p>Crypto Salt: @Model.salt</p>
+<p>Random File Name: @Model.fileName</p>

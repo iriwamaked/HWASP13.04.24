@@ -1,0 +1,7 @@
+HWASP.csproj
+HWASP.csproj.user
+Properties/
+appsettings.Development.json
+bin/
+obj/
+wwwroot/lib/
