@@ -4,6 +4,7 @@ using ASP1.Services.Kdf;
 using HWASP.Data.Context;
 using HWASP.Data.DAL;
 using HWASP.Services.RandomServices;
+using HWASP.Services.Upload;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,15 +16,16 @@ builder.Services.AddTransient<IRandomService, RandomService>();
 //Регистрируем контекст данніх и передаем ему конфигурацию
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("MsSql")),
-        ServiceLifetime.Singleton
-   );
+        builder.Configuration.GetConnectionString("MsSql"))
+       /* .LogTo(Console.WriteLine, LogLevel.Information)*/,
+    ServiceLifetime.Singleton
+);
 
 builder.Services.AddSingleton<DataAccessor>();
 
 builder.Services.AddSingleton<IHashService, ShaHashService>();
 builder.Services.AddSingleton<IKdfService, Pdkdf1Service>();
-
+builder.Services.AddSingleton<IUploadService, UploadService>();
 //Настройка Http-сессии
 builder.Services.AddDistributedMemoryCache();
 

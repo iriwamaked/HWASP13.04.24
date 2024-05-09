@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims
+@using HWASP.Data.Entities
 @{
     //тут не наш User, это Claims!
     bool isAuthenticated=Context.User.Identity?.IsAuthenticated??false; 
@@ -50,6 +51,25 @@
                 </div>
             </div>
         </nav>
+        <div class="row">
+            <div class="col col-3">
+                @{
+                    var Categories=ViewData["Categories"] as List<Category>;
+                }
+                @foreach(var category in Categories)
+                {
+                    <ul class="ctg-ul"><a asp-action="Category" asp-route-id="@(category.Slug)"><li>@category.Name</li></a>
+                    </ul>
+                }
+            </div>
+            <div class="col col-9">
+                <div class="sub-header">
+                <h1>Послуги Вашого адвоката</h1>
+                <h2>Ділова репутація та чесний вибір</h2>
+                </div>
+            </div>
+        </div>
+        
     </header>
     <div class="container">
         <main role="main" class="pb-3">

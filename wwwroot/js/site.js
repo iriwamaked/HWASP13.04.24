@@ -39,3 +39,23 @@ function authButtonClick() {
             }
         })
 }
+
+document.addEventListener('submit', e => {
+    const form = e.target;
+    if (form.id == 'category-form') {
+        e.preventDefault();
+        let formData = new FormData(form);
+        fetch("/api/servicesshop/category", {
+            method: 'POST',
+            body: formData
+        }).then(r => {
+            console.log(r);
+            if (r.status == 201) {
+                window.location.reload();
+            }
+            else {
+                r.text().then(alert);
+            }
+        });
+    }
+});

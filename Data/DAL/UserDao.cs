@@ -8,10 +8,12 @@ namespace HWASP.Data.DAL
     {
         private readonly DataContext _context;
         private readonly IKdfService _kdfService;
-        public UserDao(DataContext context, IKdfService kdfService)
+        private readonly object _dbLocker;
+        public UserDao(DataContext context, IKdfService kdfService, object dbLocker)
         {
             _context = context;
             _kdfService = kdfService;
+            _dbLocker = dbLocker;
         }
         public bool IsEmailFree(String email)
         {
@@ -29,19 +31,30 @@ namespace HWASP.Data.DAL
 
         public User? Authenticate(String email, String password) 
         {
-            User? user = _context.Users.FirstOrDefault(u => u.Email == email);
-
-            if (user != null && _kdfService.GetDerivedKey(password, user.Salt) == user.DerivedKey)
+            User? user;
+            lock( _dbLocker )
             {
-                return user;
+                user= _context.Users.FirstOrDefault(u => u.Email == email);
+
+                if (user != null && _kdfService.GetDerivedKey(password, user.Salt) == user.DerivedKey)
+                {
+                    return user;
+                }
             }
+            
             return null;
         }
 
         public User? GetUserById(String id)
         {
-            try { return _context.Users.Find(Guid.Parse(id)); }
-            catch { return null; }
+            User? user;
+            lock(_dbLocker)
+            {
+                try { user= _context.Users.Find(Guid.Parse(id)); }
+                catch { user= null; }
+            }
+            return user;
+           
         }
     }
 }

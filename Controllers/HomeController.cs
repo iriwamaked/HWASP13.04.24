@@ -2,6 +2,7 @@ using ASP1.Services.Kdf;
 using HWASP.Data.DAL;
 using HWASP.Models;
 using HWASP.Services.RandomServices;
+using HWASP.Services.Upload;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
@@ -18,13 +19,15 @@ namespace HWASP.Controllers
 
         private readonly IRandomService _randomService;
         private readonly IKdfService _kdfService;
-        public HomeController(ILogger<HomeController> logger, IRandomService rndService, DataAccessor dataAccessor, IRandomService randomService, IKdfService kdfService)
+        private readonly IUploadService _uploadService;
+        public HomeController(ILogger<HomeController> logger, IRandomService rndService, DataAccessor dataAccessor, IRandomService randomService, IKdfService kdfService, IUploadService uploadService)
         {
             _logger = logger;
             _rndService = rndService;
             _dataAccessor = dataAccessor;
             _randomService = randomService;
             _kdfService = kdfService;
+            _uploadService = uploadService;
         }
 
         public IActionResult Index()
@@ -109,19 +112,17 @@ namespace HWASP.Controllers
                 {
                     if (model.AvatarFile != null)
                     {
-                        //Отделяем расширение файла
-                        String ext = Path.GetExtension(model.AvatarFile.FileName);
-                        //Определяем место для сохранения
-                        String path = Directory.GetCurrentDirectory() + "/wwwroot/img/avatars/";
-                        //Генерируем новое имя для файла (старые нельзя сохранять, возможны конфликты, если
-                        //пользователи будут загружать файлы с одинаковыми именами
-                        String savedName = Guid.NewGuid().ToString() + ext; //берем на базе GUID, но сохраняем расширение
-                                                                            //Сохраняем
-                        using var stream = System.IO.File.OpenWrite(path + savedName);
-                        model.AvatarFile.CopyTo(stream);
-                        //Передаем сохраненное имя в модель
-                        //В модели нужно создать дополнительное поле, чтобы это имя файла туда заложить
-                        model.SavedFileName = savedName;
+                        try
+                        {
+                            model.SavedFileName = _uploadService.SaveFormFile(
+                                model.AvatarFile,
+                                "wwwroot/img/avatars"
+                                );
+                        }
+                        catch(Exception ex)
+                        {
+                            res[nameof(model.AvatarFile)] = ex.Message;
+                        }
                     }
                 }
             }
